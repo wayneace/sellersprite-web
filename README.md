@@ -26,18 +26,19 @@
 在 Cherry Studio 的 Skills 设置里用 **GitHub 链接**安装，粘贴：
 
 ```text
-https://github.com/wayneace/sellersprite-web/blob/main/skill/SKILL.md
+https://github.com/wayneace/sellersprite-web/blob/main/skill/sellersprite-web/SKILL.md
 ```
 
 也可以让 agent 用 skills 工具解析该链接后安装（install source 为
-`github:https://github.com/wayneace/sellersprite-web/blob/main/skill/SKILL.md`）。
+`github:https://github.com/wayneace/sellersprite-web/blob/main/skill/sellersprite-web/SKILL.md`）。
 
-该链接指向 `main` 的 `skill/SKILL.md`；`skill/` 是分发目录（`SKILL.md`、`references/`、`scripts/`、`VERSION`），
-仓库根目录的 `docs/` 只用于开发，不参与安装。安装目录由 Cherry Studio 管理，不要手工覆盖。
+该链接指向 `main` 的 `skill/sellersprite-web/SKILL.md`；`skill/sellersprite-web/` 是分发目录
+（`SKILL.md`、`references/`、`scripts/`、`VERSION`），仓库根目录的 `docs/` 只用于开发，不参与安装。
+安装目录由 Cherry Studio 管理，不要手工覆盖。
 
 ## 版本与更新
 
-当前版本见 `skill/VERSION`（与 `skill/SKILL.md` frontmatter 的 `version` 一致）。
+当前版本见 `skill/sellersprite-web/VERSION`（与 `skill/sellersprite-web/SKILL.md` frontmatter 的 `version` 一致）。
 
 - 每个新会话第一次使用时，skill 会检查 `bsk --version`（最低 0.4.2）和本地/远端 skill 版本；远端更高时提示更新，不自动覆盖安装目录。
 - 更新方式：在 Cherry Studio 里用**同一 GitHub 链接**重新安装；或 `git -C "<仓库目录>" pull` 后重新安装。
@@ -93,11 +94,12 @@ GitHub 安装链接指向 `skill/`，不会把开发文档带进 Cherry Studio�
 
 ```text
 README.md                    # 开发与安装说明
-skill/                       # 分发给 Cherry Studio 的 skill 本体
-  SKILL.md
-  VERSION
-  references/
-  scripts/
+skill/                       # 分发目录
+  sellersprite-web/          # 安装到 Cherry Studio 的 skill 本体
+    SKILL.md
+    VERSION
+    references/
+    scripts/
 docs/                        # 开发文档（不随 skill 安装）
   superpowers/
   verification/
