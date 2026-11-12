@@ -82,6 +82,7 @@
 - 空态下没有结果表；`extract table` 可能抽不到行。
 - **v2 跳 v3**：旧笔记说会跳 `/v3/keyword-miner`；本次 live 未复现。每次先看 `location.href` 和页面标题，跳转了就以落点页面的规则为准。
 - `read-table.js` 在本页读不到数据（`source:"none"`）；本页读取用 `bsk extract table`。
+- `extract discover` 的 target 5 分钟后过期；翻页、导航或节点移除后重新 discover。`extract` 只读已加载 DOM，不滚动/翻页，默认 500 行上限。
 - 页面底部还有一个「输入关键词」输入框（用于校验单个词是否收录），它和筛选条件不是一回事，不要把它当成主查询。
 - 「开始筛选」是 `type=submit` 按钮；页面上有多个 submit 按钮时，用表单元范围定位：
   `form:has(input[name='minSearches']) button[type='submit']`。

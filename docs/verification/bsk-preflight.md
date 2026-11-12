@@ -15,22 +15,22 @@
 bsk session start --json
 # → {"session_id":"<session>","agent_window_id":<agent-window-id>,"browser_instance_id":"<browser-instance>",...}
 
-# 2. 共享标签页：动作前先同步，拿 context_id 和顶层 observation_id
-bsk cooperate wait --session <session> --json
+# 2. 新会话/新页面：直接 sync；用户正在操作时先 wait，ready 后再 sync
 bsk cooperate sync --session <session> --json
 # → {"context_id":"<uuid>", "observation_id":"<uuid>", ...}
+# 用户操作中：bsk cooperate wait --session <session> --json
 
-# 3. 导航（需要 context + sync 返回的顶层 observation_id，不是 observation.observation_id）
+# 3. 导航（DOM 动作只需 context；若 CLI 报 observation_required，再补顶层 --observation）
 bsk navigate "https://www.sellersprite.com/v3/keyword-miner" \
-  --session <session> --context "<context_id>" --observation "<顶层 observation_id>" --json
+  --session <session> --context "<context_id>" --json
 
 # 4. 观察（只读，不需要 context）
 bsk observe --session <session> --max-tokens 4000
 
-# 5. 截图（本版本必须带 --full-page，且属视觉动作，需要 context + observation）
-bsk screenshot --session <session> --full-page \
-  --context "<context_id>" --observation "<顶层 observation_id>" \
-  --out /tmp/ss.png --timeout 30s
+# 5. 截图（默认 viewport；整页加 --full-page，--timeout 只在 full-page 时可用；截图属严格动作）
+bsk screenshot --session <session> --out /tmp/ss.png
+bsk screenshot --session <session> --full-page --timeout 30s \
+  --context "<context_id>" --observation "<顶层 observation_id>" --out /tmp/ss-full.png
 ```
 
 ## observations
@@ -41,6 +41,18 @@ bsk screenshot --session <session> --full-page \
 
 ## 异常与注意
 
-- 共享标签页状态下，`navigate` 首次调用报了 `permission_denied`（`cooperation_sync_required`，随后 `observation_required`）；按提示 `cooperate wait` → `cooperate sync` 后，用 `--context` + 顶层 `--observation` 成功。**所有带共享标签页的动作都要走这个流程；`observe` 不需要。**
+- `navigate` 首次调用报 `permission_denied`（`cooperation_sync_required`，随后 `observation_required`）：根因是还没有可用的 sync context；`cooperate sync` 后用 `--context`（必要时补顶层 `--observation`）重试一次即可。**DOM 动作复用 context；只有 evaluate/截图等严格动作每次要新的顶层 observation；`observe` 不需要。**
 - `bsk observe` 对查询栏的自定义输入组件语义暴露不完整（输入框、国家下拉未单独给出 ref），截图可见控件正常；需要定位输入框时以 `bsk extract`/片段或截图辅助。
 - 启动时已有 2 个 active sessions（历史遗留），本任务使用新 session `<session>`，未干扰。
+
+## 2026-11-13 复核（browser-skill / bsk 0.4.2）
+
+- `bsk --version` = 0.4.2；`bsk update --check` 返回 `up_to_date`；browser-skill 版本同为 0.4.2。
+- 新版 browser-skill 文档明确：
+  - 新会话 `navigate` 后直接 `cooperate sync`，`cooperate wait` 只在用户正在操作时用；
+  - target-policy 的 `context_id` 可复用于后续 DOM 动作和补充读取；
+  - `--observation` 只用于 `evaluate`、截图、无目标按键等严格动作，一次一个；
+  - `select` 用 option 的 value，不是可见文本；
+  - 截图默认 viewport，`--full-page` 可选，`--timeout` 只在 full-page 时可用；
+  - `extract discover` 的 target 5 分钟后过期。
+- 已据此更新 `SKILL.md`、`workflow.md`、`scripts/README.md` 和本页命令形状；skill 版本升到 **1.0.1**。

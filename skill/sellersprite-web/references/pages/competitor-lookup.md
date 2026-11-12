@@ -85,7 +85,7 @@
 
 - 关键词无结果时，结果区显示「很抱歉，暂无结果！」，并列出可能原因（ASIN 输入有误；ASIN 创建不久或销量太少，没有达到该类目销量前 50 万），同时推荐插件查询。
 - 这个空态**不是** `.el-table__empty-text`：`read-table.js` 会返回 `rowCount=0`、`total=0`、`empty=false`。判断空结果要看 `total` 和页面正文，不要只看 `empty`。
-- `bsk extract table` 在本页会报 `Multiple containers found`；带 `--selector ".el-table"` 又会报 `Target is not an HTML or ARIA table/grid`；用 `extract discover` 拿到的 target 虽能返回列定义，但 **rows 为 0**（div 表格）。本页读取用 `<skill-dir>/scripts/read-table.js`。
+- `bsk extract table` 在本页会报 `Multiple containers found`；带 `--selector ".el-table"` 又会报 `Target is not an HTML or ARIA table/grid`；用 `extract discover` 拿到的 target 虽能返回列定义，但 **rows 为 0**（div 表格）。本页读取用 `<skill-dir>/scripts/read-table.js`。`extract discover` 的 target 5 分钟后过期，需要时重新 discover。
 - 输入关键词后回车会自动提交；想改条件再查时，先确认输入框回显的是新值。
 - 结果表里同一个父体的变体可能合并/展开，行数与「展示所有变体」的设置有关。
 

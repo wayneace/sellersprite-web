@@ -23,7 +23,7 @@ bsk evaluate "$(cat "<skill-dir>/scripts/read-page-state.js")" \
 
 不要在用户项目目录里直接写 `scripts/read-table.js`；用 skill 目录的绝对路径，或先 `cd` 到 skill 目录。
 
-- 共享标签页需要 `bsk cooperate wait` → `bsk cooperate sync` 返回的 `context_id` 和**顶层** `observation_id`；一个 observation 只能用于一次动作，动作后重新 sync。
+- DOM 动作只需要 `bsk cooperate sync` 返回的 `context_id`，可复用；但 `evaluate` 是脚本（严格动作），需要 `--context` + **顶层** `observation_id`，一次一个。导航、用户接管或文档替换后重新 sync；新会话不需要 `cooperate wait`。
 - bsk 可能把结果包在 `value` 里；先看 `ok` 再看 `source`。
 - `source` 取值：`el-table-store`（命中 Element UI store）、`vue-tableData`（遍历 Vue 组件命中）、`none`（没找到表格数据）。
 - `ok:false` 或 `source:"none"` 时**先 `observe` 看页面布局**，不要重试同一片段；换 `bsk extract table|list` 或按页面文档的读取方式处理。
