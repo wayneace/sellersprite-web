@@ -26,18 +26,18 @@
 在 Cherry Studio 的 Skills 设置里用 **GitHub 链接**安装，粘贴：
 
 ```text
-https://github.com/wayneace/sellersprite-web/blob/main/SKILL.md
+https://github.com/wayneace/sellersprite-web/blob/main/skill/SKILL.md
 ```
 
 也可以让 agent 用 skills 工具解析该链接后安装（install source 为
-`github:https://github.com/wayneace/sellersprite-web/blob/main/SKILL.md`）。
+`github:https://github.com/wayneace/sellersprite-web/blob/main/skill/SKILL.md`）。
 
-该链接指向 `main` 分支的 `SKILL.md`；`main` 只包含 skill 本体（`references/`、`scripts/`、`VERSION`），
-开发文档在 `dev` 分支，不参与安装。安装目录由 Cherry Studio 管理，不要手工覆盖。
+该链接指向 `main` 的 `skill/SKILL.md`；`skill/` 是分发目录（`SKILL.md`、`references/`、`scripts/`、`VERSION`），
+仓库根目录的 `docs/` 只用于开发，不参与安装。安装目录由 Cherry Studio 管理，不要手工覆盖。
 
 ## 版本与更新
 
-当前版本见 `VERSION`（与 `SKILL.md` frontmatter 的 `version` 一致）。
+当前版本见 `skill/VERSION`（与 `skill/SKILL.md` frontmatter 的 `version` 一致）。
 
 - 每个新会话第一次使用时，skill 会检查 `bsk --version`（最低 0.4.2）和本地/远端 skill 版本；远端更高时提示更新，不自动覆盖安装目录。
 - 更新方式：在 Cherry Studio 里用**同一 GitHub 链接**重新安装；或 `git -C "<仓库目录>" pull` 后重新安装。
@@ -45,7 +45,7 @@ https://github.com/wayneace/sellersprite-web/blob/main/SKILL.md
 
 ## 使用方式
 
-agent 先读 `SKILL.md`，按任务打开对应页面文档。核心循环是：
+agent 先读 `skill/SKILL.md`，按任务打开对应页面文档。核心循环是：
 
 1. `bsk navigate` 打开页面；
 2. `bsk observe` 看页面现场；
@@ -79,22 +79,26 @@ agent 先读 `SKILL.md`，按任务打开对应页面文档。核心循环是：
 
 agent 在页面改版时会停下来提示用户提反馈，而不是继续猜新流程。
 
-## 开发文档（dev 分支，不随 skill 安装）
+## 开发文档（仓库根目录，不随 skill 安装）
 
-`main` 只包含 skill 本体；设计、计划、反馈和验证记录在 `dev` 分支：
+设计、计划、反馈和验证记录在仓库根目录的 `docs/`：
 
-- 设计：`https://github.com/wayneace/sellersprite-web/blob/dev/docs/superpowers/specs/2026-11-12-sellersprite-web-manual-design.md`
-- 计划：`https://github.com/wayneace/sellersprite-web/blob/dev/docs/superpowers/plans/2026-11-12-sellersprite-web-manual.md`
-- 验证记录：`https://github.com/wayneace/sellersprite-web/tree/dev/docs/verification`
+- 设计：`https://github.com/wayneace/sellersprite-web/blob/main/docs/superpowers/specs/2026-11-12-sellersprite-web-manual-design.md`
+- 计划：`https://github.com/wayneace/sellersprite-web/blob/main/docs/superpowers/plans/2026-11-12-sellersprite-web-manual.md`
+- 验证记录：`https://github.com/wayneace/sellersprite-web/tree/main/docs/verification`
 
-GitHub 安装链接指向 `main`，不会把开发文档带进 Cherry Studio。
+GitHub 安装链接指向 `skill/`，不会把开发文档带进 Cherry Studio。
 
-## 仓库结构（main）
+## 仓库结构
 
 ```text
-SKILL.md                     # agent 唯一入口
-VERSION                      # skill 版本（首次自检用）
-README.md                    # 人类读者
-references/                  # 站点、字段、操作循环、排障、6 份页面文档
-scripts/                     # 两个只读 JS 片段
+README.md                    # 开发与安装说明
+skill/                       # 分发给 Cherry Studio 的 skill 本体
+  SKILL.md
+  VERSION
+  references/
+  scripts/
+docs/                        # 开发文档（不随 skill 安装）
+  superpowers/
+  verification/
 ```

@@ -102,4 +102,4 @@
 
 ## 13. 验证记录
 
-[验证记录](https://github.com/wayneace/sellersprite-web/blob/dev/docs/verification/traffic-source.md)（dev 分支，不随 skill 安装）
+[验证记录](https://github.com/wayneace/sellersprite-web/blob/main/docs/verification/traffic-source.md)（dev 分支，不随 skill 安装）

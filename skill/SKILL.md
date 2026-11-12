@@ -47,8 +47,8 @@ bsk observe --session <SID> --max-tokens 4000
 1. `bsk --version`：最低要求 **0.4.2**。命令不存在或版本更低 → 提示用户更新 bsk（`bsk update` / `bsk doctor`），不要继续操作。
 2. 读 `<skill-dir>/VERSION` 得到本地 skill 版本（本版 `1.0.0`）。
 3. 查远端最新版本（公开仓库；失败就跳过，不阻塞任务）：
-   `curl -fsSL https://raw.githubusercontent.com/wayneace/sellersprite-web/main/VERSION`
-4. 远端版本高于本地 → 提示用户更新 skill（在 Cherry Studio 里用 GitHub 链接重新安装：`https://github.com/wayneace/sellersprite-web/blob/main/SKILL.md`），**不要自行覆盖安装目录**；用户确认后再更新。
+   `curl -fsSL https://raw.githubusercontent.com/wayneace/sellersprite-web/main/skill/VERSION`
+4. 远端版本高于本地 → 提示用户更新 skill（在 Cherry Studio 里用 GitHub 链接重新安装：`https://github.com/wayneace/sellersprite-web/blob/main/skill/SKILL.md`），**不要自行覆盖安装目录**；用户确认后再更新。
 5. 网络或权限不可用 → 备注「版本未检查」，继续任务。
 
 ## 核心循环
