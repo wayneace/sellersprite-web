@@ -40,7 +40,7 @@ https://github.com/wayneace/sellersprite-web/blob/main/skill/sellersprite-web/SK
 
 当前版本见 `skill/sellersprite-web/VERSION`（与 `skill/sellersprite-web/SKILL.md` frontmatter 的 `version` 一致）。
 
-- 每个新会话第一次使用时，skill 会检查 `bsk --version`（最低 0.4.2）和本地/远端 skill 版本；远端更高时提示更新，不自动覆盖安装目录。
+- 每个新会话第一次使用时，运行 `skill/sellersprite-web/scripts/check-bsk.sh` 同时检查 **bsk CLI** 和 **browser-skill** 版本；再对比本地/远端 sellersprite-web 版本。有旧版本时提示更新，不自动覆盖安装目录。
 - 更新方式：在 Cherry Studio 里用**同一 GitHub 链接**重新安装；或 `git -C "<仓库目录>" pull` 后重新安装。
 - 远端仓库：`https://github.com/wayneace/sellersprite-web`
 

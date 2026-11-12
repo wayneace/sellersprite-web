@@ -55,4 +55,5 @@ bsk screenshot --session <session> --full-page --timeout 30s \
   - `select` 用 option 的 value，不是可见文本；
   - 截图默认 viewport，`--full-page` 可选，`--timeout` 只在 full-page 时可用；
   - `extract discover` 的 target 5 分钟后过期。
-- 已据此更新 `SKILL.md`、`workflow.md`、`scripts/README.md` 和本页命令形状；skill 版本升到 **1.0.1**。
+- 新增 `scripts/check-bsk.sh`：同时检查 **bsk CLI** 与 **browser-skill** 版本（最低版本、两者一致性、最新版本），退出码 0/1/2/3；skill 版本升到 **1.0.2**。
+- 已据此更新 `SKILL.md`、`workflow.md`、`scripts/README.md` 和本页命令形状。
