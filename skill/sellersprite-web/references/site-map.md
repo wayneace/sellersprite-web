@@ -1,6 +1,6 @@
 # 站点地图（site-map）
 
-工作台顶部「产品」菜单的完整结构（2026-11-12 live 读取）。本版只覆盖 6 个页面，其余标「未覆盖」——不要凭菜单名猜测页面能力。
+工作台顶部「产品」菜单的完整结构（2026-11-12 live 读取）。本版覆盖 14 个页面，其余标「未覆盖」——不要凭菜单名猜测页面能力。
 
 ## 大数据选品
 
@@ -8,12 +8,12 @@
 |---|---|
 | 查竞品 | [已覆盖：竞品分析](pages/competitor-lookup.md) · `/v3/competitor-lookup` |
 | 选产品 | [已覆盖](pages/product-research.md) · `/v3/product-research` |
-| 选市场 | 未覆盖 |
+| 选市场 | [已覆盖](pages/market-research.md) · `/v3/market-research` |
 | 关键词选品 | [已覆盖](pages/keyword-research.md) · `/v2/keyword-research` |
-| ABA数据选品 | 未覆盖 |
+| ABA数据选品 | [已覆盖](pages/aba-research.md) · `/v3/aba-research` |
 | 外观专利 | 未覆盖 |
 | 全球商标库 | 未覆盖 |
-| 产品库 | 未覆盖 |
+| 产品库 | [已覆盖](pages/product-store.md) · `/v3/product-store` |
 
 ## 关键词优化
 
@@ -21,12 +21,12 @@
 |---|---|
 | 关键词挖掘 | [已覆盖](pages/keyword-miner.md) · `/v3/keyword-miner` |
 | 关键词反查 | [已覆盖](pages/keyword-reverse.md) · `/v3/keyword-reverse` |
-| 流量词对比 | 未覆盖 |
-| 拓展流量词 | 未覆盖 |
-| 关键词转化率 | 未覆盖 |
+| 流量词对比 | [已覆盖](pages/keyword-comparison.md) · `/v3/keyword-comparison` |
+| 拓展流量词 | [已覆盖](pages/traffic-extend.md) · `/v3/traffic/extend` |
+| 关键词转化率 | [已覆盖](pages/keyword-conversion-rate.md) · `/v3/keyword-conversion-rate` |
 | 关键词收录 | 未覆盖 |
-| 关键词词库 | 未覆盖 |
-| 实时查竞价 | 未覆盖 |
+| 关键词词库 | [已覆盖](pages/keyword-store.md) · `/v3/keyword-store` |
+| 实时查竞价 | [已覆盖](pages/real-time-bidding.md) · `/v3/real-time-bidding` |
 
 ## 运营推广
 

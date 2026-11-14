@@ -8,15 +8,23 @@
 
 ## 覆盖范围
 
-第一版按卖家精灵真实页面覆盖 6 个功能：
+按卖家精灵真实页面覆盖 14 个功能：
 
 | 菜单 | 页面 |
 |---|---|
 | 竞品分析 | `/v3/competitor-lookup` |
 | 选产品 | `/v3/product-research` |
+| 选市场 | `/v3/market-research` |
 | 关键词选品 | `/v2/keyword-research` |
+| ABA数据选品 | `/v3/aba-research` |
+| 产品库 | `/v3/product-store` |
 | 关键词挖掘 | `/v3/keyword-miner` |
 | 关键词反查 | `/v3/keyword-reverse` |
+| 流量词对比 | `/v3/keyword-comparison` |
+| 拓展流量词 | `/v3/traffic/extend` |
+| 关键词转化率 | `/v3/keyword-conversion-rate` |
+| 关键词词库 | `/v3/keyword-store` |
+| 实时查竞价 | `/v3/real-time-bidding` |
 | 查流量来源 | `/v3/reversing` |
 
 站点覆盖 US（USD，页面显示 `$`）和 CA（CAD，页面显示 `C$`）；US 做完整验证，CA 做站点切换与币种抽查。
