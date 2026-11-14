@@ -8,7 +8,7 @@
 
 ## 覆盖范围
 
-按卖家精灵真实页面覆盖 14 个功能：
+按卖家精灵真实页面覆盖 27 个功能：
 
 | 菜单 | 页面 |
 |---|---|
@@ -26,8 +26,21 @@
 | 关键词词库 | `/v3/keyword-store` |
 | 实时查竞价 | `/v3/real-time-bidding` |
 | 查流量来源 | `/v3/reversing` |
+| 广告洞察 | `/v3/ads-insights` |
+| 关联流量 | `/v3/relation-keyword` |
+| 出单词反查 | `/v2/aba/reverse/search` |
+| AI评论分析2.0 | `/v3/ai-review-analysis` |
+| 销量预测 | `/v2/tools/sales-estimator` |
+| 利润计算器 | `/v3/calculator/index` |
+| 批量下载图片 | `/v3/batch-download-pictures` |
+| 竞品运营拆解 | `/v3/ai-history/kp` |
+| 市场洞察 | `/v3/ai-history/ma` |
+| AI-找竞品 | `/v3/ai-history/cl` |
+| Listing诊断 | `/v3/ai-history/la` |
+| AI-拓产品 | `/v3/ai-history/ep` |
+| 关键词需求洞察 | `/v3/ai-history/krt` |
 
-站点覆盖 US（USD，页面显示 `$`）和 CA（CAD，页面显示 `C$`）；US 做完整验证，CA 做站点切换与币种抽查。
+站点覆盖 US（USD，页面显示 `$`）和 CA（CAD，页面显示 `C$`）；US 做完整验证；CA 仅选产品完成数据验证，其余页面只确认站点控件，CA 数据未验证。
 
 ## 安装到 Cherry Studio
 
@@ -57,15 +70,17 @@ https://github.com/wayneace/sellersprite-web/blob/main/skill/sellersprite-web/SK
 
 agent 先读 `skill/SKILL.md`，按任务打开对应页面文档。核心循环是：
 
-1. `bsk navigate` 打开页面；
-2. `bsk observe` 看页面现场；
-3. 用最新 ref 操作一个控件；
-4. 再做一次 `bsk observe` 确认页面变化；
-5. 用 `bsk extract table` 或 `<skill-dir>/scripts/read-table.js` 读取结果；
+1. `bsk open "<URL>" --json` 打开页面；
+2. `bsk sync --json` / `bsk observe --session <SID>` 看页面现场；
+3. 用最新 `@eN` 操作一个控件（click/fill/select 不需要逐次带 `--session/--context`）；
+4. 再做一次 `bsk sync` / `bsk observe` 确认页面变化；
+5. 用 `bsk read` 读简单字段，`bsk extract table|list` 读表格/列表，必要时用 `<skill-dir>/scripts/read-table.js` 或 `read-page-state.js` 兜底；
 6. 核对 URL、站点、数据月份、筛选条件、总数、读取行数；
-7. `bsk session stop` 收尾。
+7. `bsk close` 收尾。
 
 点击没有反应时先观察，不要在没有任何新信息的情况下重复同一动作。
+
+AI 页面会消耗次数：生成前确认页面按钮标注的次数，每页本次只生成 1 份，失败/超时不重试；本版不下载、不删除 AI 报告。创建关键词词库属于写操作，必须先得到用户明确同意。AI 通用规则见 `skill/sellersprite-web/references/ai-reports.md`。
 
 ## 只读片段
 
