@@ -1,6 +1,6 @@
 ---
 name: sellersprite-web
-version: 1.0.2
+version: 1.1.0
 description: Operate SellerSprite (卖家精灵) in the user's logged-in browser with bsk. Use for 竞品分析 / 选产品 / 选市场 / ABA数据选品 / 产品库 / 关键词选品 / 关键词挖掘 / 关键词反查 / 流量词对比 / 拓展流量词 / 关键词转化率 / 关键词词库 / 实时查竞价 / 查流量来源 on Amazon US (fully verified) or CA (product-research verified; other pages control-check only) when the SellerSprite MCP/API is unavailable, rate-limited, or the user wants zero-API-key access through their own browser.
 ---
 
@@ -47,7 +47,7 @@ bsk observe --session <SID> --max-tokens 4000
    - exit 1 → 按输出提示用户更新（`bsk update` 或重新安装/更新 browser-skill）；
    - exit 2 → 未检测到 browser-skill：提示用户确认安装；若当前会话已有 browser-skill 可继续，但记录「bsk skill 版本未校验」；
    - exit 0 → 通过；若输出 browser extension 警告，提示用户在 Chrome 里更新 BrowserSkill 扩展（`bsk read` 可能暂不可用，改用 `bsk extract` / `bsk evaluate`）。
-2. 读 `<skill-dir>/VERSION` 得到本地 sellersprite-web skill 版本（本版 `1.0.2`）。
+2. 读 `<skill-dir>/VERSION` 得到本地 sellersprite-web skill 版本（本版 `1.1.0`）。
 3. 查远端最新版本（公开仓库；失败就跳过，不阻塞任务）：
    `curl -fsSL https://raw.githubusercontent.com/wayneace/sellersprite-web/main/skill/sellersprite-web/VERSION`
 4. 远端版本高于本地 → 提示用户更新 skill（在 Cherry Studio 里用 GitHub 链接重新安装：`https://github.com/wayneace/sellersprite-web/blob/main/skill/sellersprite-web/SKILL.md`），**不要自行覆盖安装目录**；用户确认后再更新。

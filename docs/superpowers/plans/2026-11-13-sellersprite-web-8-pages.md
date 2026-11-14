@@ -726,7 +726,7 @@ Expected: all exit 0; `check-bsk.sh` prints CLI 0.5.0, browser-skill 0.5.0, late
 Run:
 
 ```sh
-rg -n '<redacted>|<redacted>|<redacted>|<redacted>|<redacted>|<redacted>' --glob '!.git/**' .
+rg -n "$HOME|<redacted>|<redacted>|<redacted>|<redacted>" --glob '!.git/**' --glob '!docs/superpowers/**' .
 ```
 
 Expected: no output. If a real library name or account value appears, replace it with `<library-name>` or `<account>` and re-run.
