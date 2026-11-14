@@ -726,7 +726,8 @@ Expected: all exit 0; `check-bsk.sh` prints CLI 0.5.0, browser-skill 0.5.0, late
 Run:
 
 ```sh
-rg -n "$HOME|<redacted>|<redacted>|<redacted>|<redacted>" --glob '!.git/**' --glob '!docs/superpowers/**' .
+# 真实隐私词表只放在本地未提交文件；不要把账号/库名/session id 写进仓库。
+rg -n "$HOME|/Users/|<account-id>|<library-name>|<session-id>|<sku-prefix>\[0-9\]" --glob '!.git/**' .
 ```
 
 Expected: no output. If a real library name or account value appears, replace it with `<library-name>` or `<account>` and re-run.

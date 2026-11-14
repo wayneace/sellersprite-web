@@ -1103,10 +1103,11 @@ Expected:
 Run:
 
 ```sh
-rg -n "$HOME|/Users/|<redacted>|<redacted>|<redacted>|<redacted>" README.md skill docs/verification
+# 真实隐私词表只放在本地未提交文件；不要把账号/库名/session id 写进仓库。
+rg -n "$HOME|/Users/|<account-id>|<library-name>|<session-id>|<sku-prefix>\[0-9\]" README.md skill docs/verification
 ```
 
-Expected: 无输出（exit 1 表示干净）。若命中，先删除或脱敏再继续。
+Expected: 无输出（exit 1 表示干净）。若命中，先删除或脱敏再继续。扫描范围要覆盖 `docs/superpowers`，避免把 plan 里的示例值当成安全内容。
 
 - [ ] **Step 4: 复核 27 页与 AI 隐私**
 

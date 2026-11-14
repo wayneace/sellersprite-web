@@ -111,7 +111,7 @@ bsk observe --session <SID> --max-tokens 4000
 5. **竞品流量与转化**：`keyword-comparison`（自己和竞品的共同/差异词）→ `traffic-extend`（批量拓词）→ `keyword-conversion-rate`（转化/ACOS 筛选）→ `keyword-store`（词库沉淀）；需要建议竞价时用 `real-time-bidding`。
 6. **市场/竞品筛选**：`competitor-lookup`（从 ASIN/关键词/品牌/卖家/类目出发）→ `product-research` 深筛。
 7. **广告与关联流量**：`ads-insights`（看广告/流量结构）→ `relation-keyword`（看关联流量）→ `aba-reverse-search`（找出单词）。
-8. **工具与 AI 解读**：`sales-estimator` / `profit-calculator`（验证销量与利润）→ `batch-download-pictures`（取素材）→ AI 解读六页（竞品/市场/Listing/拓产品/关键词需求）；AI 生成前先看 `references/ai-reports.md`。
+8. **工具与 AI 解读**：`sales-estimator` / `profit-calculator`（验证销量与利润）→ `batch-download-pictures`（取素材）→ AI 解读六页（竞品运营拆解/市场洞察/AI-找竞品/Listing诊断/AI-拓产品/关键词需求）；AI 生成前先看 `references/ai-reports.md`。
 
 ## 报告格式
 

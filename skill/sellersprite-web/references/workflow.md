@@ -129,7 +129,7 @@ URL:
 ## 收尾
 
 ```sh
-bsk session stop <SID> --json
+bsk close --json
 ```
 
 - 关掉自己开的标签页/会话前先确认没有未完成的导出任务。

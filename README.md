@@ -68,7 +68,7 @@ https://github.com/wayneace/sellersprite-web/blob/main/skill/sellersprite-web/SK
 
 ## 使用方式
 
-agent 先读 `skill/SKILL.md`，按任务打开对应页面文档。核心循环是：
+agent 先读 `skill/sellersprite-web/SKILL.md`，按任务打开对应页面文档。核心循环是：
 
 1. `bsk open "<URL>" --json` 打开页面；
 2. `bsk sync --json` / `bsk observe --session <SID>` 看页面现场；
@@ -108,8 +108,9 @@ agent 在页面改版时会停下来提示用户提反馈，而不是继续猜�
 
 设计、计划、反馈和验证记录在仓库根目录的 `docs/`：
 
-- 设计：`https://github.com/wayneace/sellersprite-web/blob/main/docs/superpowers/specs/2026-11-12-sellersprite-web-manual-design.md`
-- 计划：`https://github.com/wayneace/sellersprite-web/blob/main/docs/superpowers/plans/2026-11-12-sellersprite-web-manual.md`
+- 最新设计（剩余 13 页）：`https://github.com/wayneace/sellersprite-web/blob/main/docs/superpowers/specs/2026-11-14-sellersprite-web-remaining-13-pages-design.md`
+- 最新计划（剩余 13 页）：`https://github.com/wayneace/sellersprite-web/blob/main/docs/superpowers/plans/2026-11-14-sellersprite-web-remaining-13-pages.md`
+- 历史设计/计划（初始 6 页）：`docs/superpowers/specs/2026-11-12-sellersprite-web-manual-design.md`、`docs/superpowers/plans/2026-11-12-sellersprite-web-manual.md`
 - 验证记录：`https://github.com/wayneace/sellersprite-web/tree/main/docs/verification`
 
 GitHub 安装链接指向 `skill/`，不会把开发文档带进 Cherry Studio。

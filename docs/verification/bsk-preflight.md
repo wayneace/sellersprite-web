@@ -82,7 +82,8 @@ exit=0
 - **v2 页面**：出单词反查是 HTML `<table>`，`bsk extract table` 可直接读 14 列/50 行；销量预测是转置表，`bsk extract table` 报 `Multiple containers found`，指定 target 只得到合并列名/0 行，实际用 `bsk observe` 读 VOM。
 - **广告洞察**：不是 `.el-table`，`read-table.js` 只能读 `total`/`pageSize`/`currentPage`；结果矩阵用 `bsk observe` + 只读 `bsk evaluate` 读 `section.groups-content > ul > li`。
 - **批量下载图片**：`bsk download --out /tmp/<file>.zip @<立即下载ref>` 能捕获 zip；页面进度条可能停在 0%，不要重复下载或点取消。
-- **AI 页面**：生成后页面可能回到落地页、无显式进度；bsk session 默认 5 分钟空闲超时，报告在服务端完成后重新打开页面，在「最近3条分析报告」找回，不要重新生成。
+- **v2 输入组件**：出单词反查点示例 ASIN 自动查询，未触发 `bsk fill` 超时；销量预测的 `bsk fill` 正常。两页都保留了“先 `bsk sync` 看是否已写入，未写入再点示例，不重放”的规则。
+- **AI 页面**：生成后页面可能回到落地页、无显式进度；bsk session 默认 5 分钟空闲超时，报告在服务端完成后重新打开页面，在「最近3条分析报告」找回，不要重新生成。本次 AI 评论分析约 32 秒完成；竞品/市场/找竞品/Listing/拓产品/KRT 均在 5 分钟会话超时后从最近报告找回，等待范围约 32 秒到 5 分钟以上。
 - **AI 报告正文**：多数 AI 页只暴露报告头/模块标题/报告卡，正文长文本未完整进入可读 DOM；只读结构，不抄全文。
 - **KRT**：实际前置是关键词词库（不是 ASIN/关键词）；空词库 `下一步` 不可用，少于 50 个关键词提示打标效果有限；报告有效期 30 天（其他 AI 页多为 10 天）；按钮未标消耗，按额度变化推算约 10 次。
 - **`bsk read` 限制**：读整页/大表格会报 `DOM read byte limit exceeded`；优先用 `--ref`/具体 selector，表格用 `bsk extract` 或 VOM。
