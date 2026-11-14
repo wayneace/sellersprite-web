@@ -3,8 +3,8 @@
 # Exit codes: 0 ok, 1 outdated/mismatch, 2 browser-skill not found, 3 bsk CLI missing.
 set -u
 
-MIN_CLI="${BSK_MIN_VERSION:-0.4.2}"
-MIN_SKILL="${BSK_SKILL_MIN_VERSION:-0.4.2}"
+MIN_CLI="${BSK_MIN_VERSION:-0.5.0}"
+MIN_SKILL="${BSK_SKILL_MIN_VERSION:-0.5.0}"
 status=0
 
 ver_ge() {
@@ -87,19 +87,29 @@ if [ -z "$skill_file" ]; then
 fi
 
 skill_version="$(awk '/^---[[:space:]]*$/{n++; next} n==1 && /^version:[[:space:]]*/{sub(/^version:[[:space:]]*/, ""); print; exit}' "$skill_file")"
+skill_is_versioned=1
 if [ -z "$skill_version" ]; then
-  echo "browser-skill: 版本未知（${skill_file} 没有 frontmatter version）"
-  exit 2
+  # browser-skill 0.5.0 不再写 frontmatter version；用工作流标记判断兼容性。
+  if grep -q 'bsk open' "$skill_file" && grep -q 'bsk close' "$skill_file"; then
+    skill_is_versioned=0
+    skill_version="0.5.0-compatible"
+    echo "browser-skill: ${skill_version}（无 version 字段；检测到 bsk open/close）ok（${skill_file}）"
+  else
+    echo "browser-skill: 版本未知且不包含 0.5 工作流标记（${skill_file}）-> 重新安装/更新 browser-skill"
+    exit 2
+  fi
 fi
-if ver_ge "$skill_version" "$MIN_SKILL"; then
-  echo "browser-skill: ${skill_version}（最低 ${MIN_SKILL}）ok（${skill_file}）"
-else
-  echo "browser-skill: ${skill_version}（最低 ${MIN_SKILL}）过旧（${skill_file}）-> 重新安装/更新 browser-skill"
-  status=1
+if [ "$skill_is_versioned" = 1 ]; then
+  if ver_ge "$skill_version" "$MIN_SKILL"; then
+    echo "browser-skill: ${skill_version}（最低 ${MIN_SKILL}）ok（${skill_file}）"
+  else
+    echo "browser-skill: ${skill_version}（最低 ${MIN_SKILL}）过旧（${skill_file}）-> 重新安装/更新 browser-skill"
+    status=1
+  fi
 fi
 
 # 3. Consistency and optional latest-release check
-if [ "$cli_version" != "$skill_version" ]; then
+if [ "$skill_is_versioned" = 1 ] && [ "$cli_version" != "$skill_version" ]; then
   echo "版本不一致: bsk CLI $cli_version vs browser-skill $skill_version -> 更新较旧的一方"
   status=1
 fi
@@ -113,10 +123,23 @@ if [ "${BSK_SKIP_UPDATE_CHECK:-0}" != "1" ]; then
       echo "bsk CLI 有更新: $cli_version -> ${latest}（bsk update）"
       status=1
     fi
-    if ! ver_ge "$skill_version" "$latest"; then
+    if [ "$skill_is_versioned" = 1 ] && ! ver_ge "$skill_version" "$latest"; then
       echo "browser-skill 有更新: $skill_version -> ${latest}（重新安装/更新 browser-skill）"
       status=1
     fi
+  fi
+fi
+
+# 4. Browser extension version (warning only; does not change exit status)
+if command -v bsk >/dev/null 2>&1; then
+  status_json="$(bsk status --json 2>/dev/null)"
+  ext_version="$(printf '%s\n' "$status_json" | sed -n 's/.*"extension_version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -1)"
+  ext_protocol="$(printf '%s\n' "$status_json" | sed -n 's/.*"extension_protocol_version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -1)"
+  skew="$(printf '%s\n' "$status_json" | sed -n 's/.*"version_skew"[[:space:]]*:[[:space:]]*\([a-z]*\).*/\1/p' | head -1)"
+  if [ "$skew" = "true" ]; then
+    echo "browser extension: ${ext_version:-未知}（与 bsk CLI 不一致）-> 在 Chrome 里更新 BrowserSkill 扩展；bsk read 可能不可用，改用 bsk extract/bsk evaluate"
+  else
+    echo "browser extension: ${ext_version:-未知}（protocol ${ext_protocol:-?}）ok"
   fi
 fi
 

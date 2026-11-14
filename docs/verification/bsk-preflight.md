@@ -57,3 +57,21 @@ bsk screenshot --session <session> --full-page --timeout 30s \
   - `extract discover` 的 target 5 分钟后过期。
 - 新增 `scripts/check-bsk.sh`：同时检查 **bsk CLI** 与 **browser-skill** 版本（最低版本、两者一致性、最新版本），退出码 0/1/2/3；skill 版本升到 **1.0.2**。
 - 已据此更新 `SKILL.md`、`workflow.md`、`scripts/README.md` 和本页命令形状。
+
+## 2026-11-14 复核（bsk 0.5.0 / 扩展 0.5.0）
+
+- `bsk --version` = 0.5.0；browser-skill 0.5.0 已装入 Cherry Studio（安装副本补了 `version: 0.5.0`）；浏览器扩展 0.5.0 / protocol 1.9。
+- 新工作流：`bsk open` → `bsk sync` → `bsk click/fill @eN` → `bsk extract` / `bsk read` → `bsk close`；DOM 动作不再逐步带 `--session/--context`。
+- `bsk read` 实测可用：读取 `page_url` / `title`、`h1` 文本和输入值，不需要 observation；简单字段优先用它。
+- `bsk evaluate` 仍是严格动作：动态页面上先紧邻 `bsk sync`，再用这次 sync 的 `context_id` + 顶层 `observation_id`。
+- 自检输出：
+
+```text
+bsk CLI: 0.5.0（最低 0.5.0）ok
+browser-skill: 0.5.0（最低 0.5.0）ok
+最新 bsk: 0.5.0
+browser extension: 0.5.0（protocol 1.9）ok
+exit=0
+```
+
+- 旧扩展 0.4.2 环境回退到 `bsk extract` / `bsk evaluate`；`bsk read` 会报 `unsupported`。

@@ -22,17 +22,17 @@ description: Operate SellerSprite (卖家精灵) in the user's logged-in browser
 ## 开始
 
 ```sh
-bsk session start --json
-# 记下 session_id；有多个浏览器时先 bsk browsers，再 bsk session start --browser <id|label>
-bsk navigate "<URL>" --session <SID> --json
-bsk cooperate sync --session <SID> --json
+bsk open "<URL>" --json
+# 返回 session_id / context_id / observation_id / VOM；多浏览器先 bsk browsers，再 --browser <id|label>
+bsk sync --json
 bsk observe --session <SID> --max-tokens 4000
 ```
 
-- 新会话/新页面：先 `navigate` 再 `cooperate sync`；后续导航、用户接管或文档替换后，带当前 `--context` 重新 `navigate` 并再 `sync`。
-- **DOM 动作**（click/fill/select）和补充读取只需要 `--context`，同一个 target-policy context 可复用；不必每步重新 sync。
-- `--observation` 只给 `evaluate`、截图、无目标按键等**严格动作**，一次一个；用 sync 的**顶层** `observation_id`，不是嵌套 `observation.observation_id`。
-- 用户正在操作标签页时先 `bsk cooperate wait --session <SID> --json`，等 `ready` 后再 sync；新会话不需要 wait。
+- `bsk open` 打开/复用 scope；`--scope <name>` 用于并行任务隔离。
+- **DOM 动作**（click/fill/select）直接用最新 `@eN`，不需要每步带 `--session/--context`：`bsk click @eN`、`bsk fill @eN --value "..."`。
+- 导航、用户接管或文档替换后 `bsk sync`；用户正在操作标签页时先 `bsk cooperate wait --session <SID> --json`，等 `ready` 后再 sync。
+- `--observation` 只给 `evaluate`、截图、无目标按键等**严格动作**，一次一个；用**紧邻 sync** 的顶层 `observation_id`，不是嵌套 `observation.observation_id`。`bsk read` 不需要 observation。
+- 收尾 `bsk close`（即使出错也要 close）。
 
 确认三件事：右上角有账号头像（已登录）、查询栏最左侧站点是目标站点（「美国站」/「加拿大站」）、页面标题是目标工具。未登录或站点不对，先处理再查询。切换站点后页面会重查，必须重新读总数与币种。
 
@@ -46,7 +46,7 @@ bsk observe --session <SID> --max-tokens 4000
    - exit 3 → bsk CLI 未安装/不可用：先装/修 bsk，不要继续；
    - exit 1 → 按输出提示用户更新（`bsk update` 或重新安装/更新 browser-skill）；
    - exit 2 → 未检测到 browser-skill：提示用户确认安装；若当前会话已有 browser-skill 可继续，但记录「bsk skill 版本未校验」；
-   - exit 0 → 通过。
+   - exit 0 → 通过；若输出 browser extension 警告，提示用户在 Chrome 里更新 BrowserSkill 扩展（`bsk read` 可能暂不可用，改用 `bsk extract` / `bsk evaluate`）。
 2. 读 `<skill-dir>/VERSION` 得到本地 sellersprite-web skill 版本（本版 `1.0.2`）。
 3. 查远端最新版本（公开仓库；失败就跳过，不阻塞任务）：
    `curl -fsSL https://raw.githubusercontent.com/wayneace/sellersprite-web/main/skill/sellersprite-web/VERSION`
@@ -56,10 +56,10 @@ bsk observe --session <SID> --max-tokens 4000
 ## 核心循环
 
 1. **观察**：`navigate` 后先 `observe`，确认标题、输入框、查询按钮、结果区状态。
-2. **操作**：只用最新一次观察里的 ref；一次一个动作；DOM 动作带 `--context` 即可，`--observation` 只给脚本/截图等严格动作；能带 `bsk step --until-visible "<动作后才会出现的正向锚点>"` 就带上。**复查询时旧结果行本来就可见，不要用「有行」当锚点。**
+2. **操作**：只用最新一次观察里的 ref；一次一个动作；DOM 动作直接 `bsk click @eN` / `bsk fill @eN --value ...`，不需要逐次带 `--context`；`--observation` 只给脚本/截图等严格动作；能带 `bsk step --until-visible "<动作后才会出现的正向锚点>"` 就带上。**复查询时旧结果行本来就可见，不要用「有行」当锚点。**
 3. **再观察**：动作后必须重新 `observe` 或读状态（不需要为每次 observe 重新 sync）。**点击返回成功不等于页面生效。**
 4. **验证**：核对总数、当前页、加载遮罩、空态、表头、筛选回显；筛选面板改完要再点一次查询。
-5. **读取**：**以页面文档指定的读取方式为准**；页面文档没写时才按默认顺序：`bsk extract table --json` → `<skill-dir>/scripts/read-table.js`（skill 安装目录下的 scripts/）→ `observe`/`get-html` 兜底。`extract discover` 的 target 5 分钟后过期，翻页/导航后重新 discover。
+5. **读取**：**以页面文档指定的读取方式为准**；页面文档没写时才按默认顺序：简单字段用 `bsk read`（标题/URL、站点标签、输入值、勾选、空态/分页文案）→ `bsk extract table|list --json` → `<skill-dir>/scripts/read-table.js`（Vue store/宽表）→ `<skill-dir>/scripts/read-page-state.js`（整页可见状态）→ `observe`/`get-html` 兜底。`extract discover` 的 target 5 分钟后过期，翻页/导航后重新 discover。
 6. **记录**：URL、站点、数据月份、查询条件、总数、读取行数、页码；截断或空态写进备注。
 7. **收尾**：`bsk session stop <SID>`；有导出任务时提醒用户下载位置。
 

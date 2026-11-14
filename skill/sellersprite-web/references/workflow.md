@@ -4,24 +4,25 @@
 
 ## 开始
 
-- 新会话第一次使用先做「首次自检」：`bsk --version` ≥ 0.4.2、skill 版本与远端对比；细节见 `SKILL.md`。
+- 新会话第一次使用先做「首次自检」：`bsk --version` ≥ 0.5.0、skill 版本与远端对比；细节见 `SKILL.md`。
 
 ```sh
-bsk session start --json
-# → 记下 session_id（每个会话不同）；多浏览器：bsk browsers → bsk session start --browser <id|label>
+bsk open "<URL>" --json
+# → 返回 session_id / context_id / observation_id / VOM；多浏览器先 bsk browsers，再 --browser <id|label>
+# → 并行任务用 --scope <name> 隔离
 
-bsk navigate "<URL>" --session <SID> --json
-bsk cooperate sync --session <SID> --json
-# → context_id 可复用于后续 DOM 动作；顶层 observation_id 只给严格动作
+bsk sync --json
+# → 导航、用户接管或文档替换后重新同步
 
 bsk observe --session <SID> --max-tokens 4000
 ```
 
-- **DOM 动作**（click/fill/select）和补充读取只需要 `--context`；同一个 target-policy context 可复用，不必每步重新 sync。
-- `--observation` 只给 `evaluate`、截图、无目标按键等**严格动作**，一次一个；用 sync 的**顶层** `observation_id`，不是嵌套 `observation.observation_id`。
-- 导航、用户接管或文档替换后重新 sync；用户正在操作标签页时先 `bsk cooperate wait --session <SID> --json`，等 `ready` 后再 sync；新会话不需要 wait。
-- `observe` 是只读，不需要 context；页面变了就重新 `observe`，不要凭记忆用旧 ref。
+- **DOM 动作**（click/fill/select）直接用最新 `@eN`，不需要每步带 `--session/--context`：`bsk click @eN`、`bsk fill @eN --value "..."`。
+- `--observation` 只给 `evaluate`、截图、无目标按键等**严格动作**，一次一个；用**紧邻 sync** 的顶层 `observation_id`，不是嵌套 `observation.observation_id`。`bsk read` 不需要 observation。
+- 导航、用户接管或文档替换后 `bsk sync`；用户正在操作标签页时先 `bsk cooperate wait --session <SID> --json`，等 `ready` 后再 sync。
+- `observe` 是只读；页面变了就重新 `observe`，不要凭记忆用旧 ref。
 - 确认已登录（右上角头像）和目标站点（查询栏最左侧「美国站」/「加拿大站」）。未登录用 `bsk request-help --session <SID> --prompt "请登录卖家精灵"`。
+- 收尾 `bsk close --json`，即使中途出错也要 close。
 
 ## 观察
 
@@ -37,17 +38,16 @@ bsk observe --session <SID> --max-tokens 4000
 
 ```sh
 # 点击（ref 来自最近一次 observe/snapshot）
-bsk click "@eN" --session <SID> --context "<CTX>" --json
+bsk click "@eN" --json
 
 # 填输入框（--value 必填）
-bsk fill "@eN" --value "yoga mat" --session <SID> --context "<CTX>" --json
+bsk fill "@eN" --value "yoga mat" --json
 
 # 选择原生 <select>（--value 必填；用 option 的 value，不是可见文本）
-bsk select "@eN" --value "US" --session <SID> --context "<CTX>" --json
+bsk select "@eN" --value "US" --json
 
 # 一步完成并等一个“出现后应该可见”的正向信号（结果行/结果区出现）
-bsk step --session <SID> --context "<CTX>" \
-  --action click --params '{"ref":"@eN"}' --until-visible ".el-table__body-wrapper tbody tr"
+bsk step --action click --params '{"ref":"@eN"}' --until-visible ".el-table__body-wrapper tbody tr"
 ```
 
 `--until-visible` 必须是动作后**会变可见**的正向锚点（结果行、结果区、总数文案）。不要传 `display: none` 的遮罩或“消失后可见”的元素；页面没有合适锚点时改用动作后 `observe`。
@@ -82,11 +82,12 @@ bsk step --session <SID> --context "<CTX>" \
 
 **读取方式以页面文档为准**（每页的表格结构不同）；页面文档没写时，才按下面的默认优先级：
 
-1. `bsk extract discover --session <SID> --json` 看页面有哪些可抽取容器；
-2. `bsk extract table --session <SID> --json` / `bsk extract list --session <SID> --json`（多个容器时用 `--target <id>` 或 `--selector`）；
-3. `bsk evaluate "$(cat "<skill-dir>/scripts/read-table.js")" --session <SID> --context "<CTX>" --observation "<OBS>" --json`（宽表、组件 store 原始字段、需要 total/页码/加载态时）；
-4. `bsk evaluate "$(cat "<skill-dir>/scripts/read-page-state.js")" ...`（URL、标题、弹窗、遮罩、空态）；
-5. `observe` / `get-html` 人工核对。
+1. **简单字段**（标题/URL、站点标签、输入值、勾选状态、空态文案、分页文案）：`bsk read --selector "<CSS>" --fields-json '[{"key":"text","read":"text"}]' --json`；它不执行 JS，时钟/轮播/无关 iframe 变化不会让读取失效。`bsk read` 需要扩展 0.5.0（protocol 1.9）；旧扩展报 `unsupported` 时改用 `observe` 或 `evaluate`。
+2. `bsk extract discover --json` 看页面有哪些可抽取容器；
+3. `bsk extract table --json` / `bsk extract list --json`（多个容器时用 `--target <id>` 或 `--selector`）；
+4. `bsk evaluate "$(cat "<skill-dir>/scripts/read-table.js")" --session <SID> --context "<CTX>" --observation "<OBS>" --json`（Vue 组件 store、宽表、需要 total/pageSize/currentPage 时；evaluate 前紧邻做一次 `bsk sync`）；
+5. `bsk evaluate "$(cat "<skill-dir>/scripts/read-page-state.js")" ...`（整页可见状态：URL、标题、弹窗、遮罩、空态、加载态）；
+6. `observe` / `get-html` 人工核对。
 
 - `extract` 只读已加载 DOM，不滚动/翻页；默认上限 500 行/100 列，需要更多用 `--max-rows` / `--max-columns`。`discover` 的 target 5 分钟后过期，翻页/导航/节点移除后重新 discover。
 - `evaluate` 是脚本（严格动作），必须带 `--context` + 顶层 `--observation`；普通 DOM 动作不需要 observation。

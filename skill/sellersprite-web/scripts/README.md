@@ -12,9 +12,25 @@
 
 ## 运行方式
 
+简单字段优先用 `bsk read`（需要扩展 0.5.0 / protocol 1.9）：
+
+```sh
+# 读标题/标签/空态文本
+bsk read --selector "h1" --fields-json '[{"key":"text","read":"text"}]' --json
+# 读输入值/站点下拉当前值
+bsk read --selector "input" --fields-json '[{"key":"value","read":"value"}]' --max-nodes 5 --json
+```
+
+`bsk read` 不执行 JS，不需要 `--observation`；它返回 `items[].values`，并带 `page_url` / `title`。
+
+脚本仍用 `bsk evaluate`：
+
 ```sh
 # <skill-dir> 是 skill 安装目录，例如
 # ~/Library/Application Support/CherryStudio/Data/Skills/sellersprite-web
+bsk open "<URL>" --json
+# 记下 session_id / context_id / observation_id；evaluate 前紧邻再 sync 一次，
+# 用这次 sync 的 context_id + 顶层 observation_id（bsk open 的 observation 可能已过期）
 bsk evaluate "$(cat "<skill-dir>/scripts/read-table.js")" \
   --session "<SID>" --context "<CTX>" --observation "<OBS>" --json
 
@@ -29,14 +45,17 @@ bsk evaluate "$(cat "<skill-dir>/scripts/read-page-state.js")" \
 ```sh
 bash "<skill-dir>/scripts/check-bsk.sh"
 # 0 通过；1 bsk CLI 或 browser-skill 过旧/不一致；2 未找到 browser-skill；3 bsk CLI 不可用
-# BSK_MIN_VERSION / BSK_SKILL_MIN_VERSION 可覆盖最低版本
+# 最低版本默认 0.5.0；BSK_MIN_VERSION / BSK_SKILL_MIN_VERSION 可覆盖
 # BSK_SKIP_UPDATE_CHECK=1 跳过联网的最新版本检查
 # BSK_SKILLS_DIR=<dir> 指定 browser-skill 的父目录
 ```
 
 脚本只读，不操作页面；会检查 Cherry Studio、Codex、Claude Code、Cursor 的 skills 目录。
 
-- DOM 动作只需要 `bsk cooperate sync` 返回的 `context_id`，可复用；但 `evaluate` 是脚本（严格动作），需要 `--context` + **顶层** `observation_id`，一次一个。导航、用户接管或文档替换后重新 sync；新会话不需要 `cooperate wait`。
+- browser-skill 0.5.0 的 `SKILL.md` 没有 `version:` 字段；脚本用 `bsk open` / `bsk close` 工作流标记判断兼容性，并检查 `.bsk-source` 是否存在。
+- 脚本还会读取浏览器扩展版本；扩展 0.5.0 / protocol 1.9 打印 ok，版本不一致时打印警告（不改变 exit code）。扩展未更新到 0.5.0 时 `bsk read` 不可用，改用 `bsk extract` 或 `bsk evaluate`。
+
+- bsk 0.5.0：`bsk open` 打开/复用 scope；DOM 动作直接用 `@eN`，不需要每步带 `--session/--context`；导航、用户接管或文档替换后 `bsk sync`。`bsk evaluate` 是严格动作，需要紧邻 sync 的 `--context` + **顶层** `observation_id`；`bsk read` 不需要 observation。收尾 `bsk close`。
 - bsk 可能把结果包在 `value` 里；先看 `ok` 再看 `source`。
 - `source` 取值：`el-table-store`（命中 Element UI store）、`vue-tableData`（遍历 Vue 组件命中）、`none`（没找到表格数据）。
 - `ok:false` 或 `source:"none"` 时**先 `observe` 看页面布局**，不要重试同一片段；换 `bsk extract table|list` 或按页面文档的读取方式处理。
