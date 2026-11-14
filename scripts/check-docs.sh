@@ -16,7 +16,8 @@ URLS=(
 status=0
 
 check_page() {
-  local p="$1" f="$ROOT/skill/sellersprite-web/references/pages/$p.md"
+  local p="$1"
+  local f="$ROOT/skill/sellersprite-web/references/pages/$p.md"
   if [ ! -f "$f" ]; then
     echo "MISSING $f"
     status=1
