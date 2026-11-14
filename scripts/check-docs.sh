@@ -6,12 +6,20 @@ PAGES=(
   competitor-lookup product-research keyword-research keyword-miner keyword-reverse traffic-source
   market-research aba-research product-store keyword-comparison traffic-extend
   keyword-conversion-rate keyword-store real-time-bidding
+  ads-insights relation-keyword aba-reverse-search ai-review-analysis
+  sales-estimator profit-calculator batch-download-pictures
+  ai-competitor-analysis ai-market-insight ai-find-competitors
+  ai-listing-diagnosis ai-product-expansion ai-keyword-demand
 )
 URLS=(
   /v3/competitor-lookup /v3/product-research /v2/keyword-research /v3/keyword-miner
   /v3/keyword-reverse /v3/reversing /v3/market-research /v3/aba-research /v3/product-store
   /v3/keyword-comparison /v3/traffic/extend /v3/keyword-conversion-rate /v3/keyword-store
   /v3/real-time-bidding
+  /v3/ads-insights /v3/relation-keyword /v2/aba/reverse/search /v3/ai-review-analysis
+  /v2/tools/sales-estimator /v3/calculator/index /v3/batch-download-pictures
+  /v3/ai-history/kp /v3/ai-history/ma /v3/ai-history/cl
+  /v3/ai-history/la /v3/ai-history/ep /v3/ai-history/krt
 )
 status=0
 
