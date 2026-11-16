@@ -14,6 +14,7 @@
 - 查询后 URL 形如
   `https://www.sellersprite.com/v3/market-research?dataDimension=singleMonth&market=US&page=1&size=60&monthName=bsr_sales_nearly&nodeIdPaths=%5B%221055398%22%5D...`
 - 本页的站点、月份、类目和部分筛选条件会写入 URL（例如 `nodeIdPaths`、`minTotalSales`），但完整条件仍以页面回显为准。
+- 单个细分市场报告 drill-down：`/v3/market-research/{marketId}/{nodeIdPath}?sampleCount=..&newReleaseNum=..&topN=..`；月份用报告页的 `.hero-month-select`，不是路由参数。
 
 ## 3. 站点选择
 
@@ -33,6 +34,8 @@
 8. **指标分组**：市场需求指标、市场波动指标、市场竞争指标；每组下方是「最小值 ~ 最大值」输入框。
 9. **操作按钮**：开始筛选、重置条件、保存当前模式。
 10. **结果区**：标题「查询结果|选市场」；表格 + 分页。
+11. **市场报告 drill-down**：结果行/细分市场入口进入单个市场报告页，包含 summary/sales/product/brand/seller/seller-type/A+/seller-nation/listing-date/listing-trend/ratings/rating/price/demand 等报告块。
+12. **类目节点**：选择类目弹窗就是类目树；节点 `id`/`path` 可给其他查询当参数。`/v3/category-nodes` 没有独立页，会回到本页。
 
 ## 5. 必填输入与可选筛选
 
@@ -46,6 +49,8 @@
   - 市场竞争指标：品牌数量、卖家数量、平均卖家数、商品集中度、品牌集中度、卖家集中度、A+数量占比、FBA占比、FBM占比、Amazon自营占比、卖家所属地、卖家所属地占比。
 - **「开始筛选」是查询按钮**：填完条件必须点它，结果区才会刷新。
 - 「重置条件」清空筛选表单；「保存当前模式」保存当前筛选组合。
+- **市场报告**：从结果行的细分市场/市场分析入口进入；`sampleCount`/`newReleaseNum`/`topN` 是报告页路由参数，报告页没有这些控件；月份用报告页下拉；行业需求关键词在报告页内分页。
+- **类目节点**：在类目树里展开节点读取子节点；未展开节点的 `children` 计数可能是 0，叶子节点返回空列表。
 
 ## 6. 操作流程
 
@@ -72,6 +77,20 @@
 - `currency`：`USD`；`currentMonth`：页面月份代码。
 - `nodeImageDtos`：样本商品图（最多 10 个 ASIN/图片），不是结果行本身。
 
+### 市场报告 drill-down
+
+- 报告块：summary（核心看板）、sales（行业销售趋势）、product/brand/seller（商品/品牌/卖家集中度）、seller-type、A+、seller-nation、listing-date/listing-trend、ratings-count/rating、price、demand/demand-keywords。
+- `totalProducts` 是类目全量商品数；报告里的 `total` 是本次样本数，不是全量。
+- `avgProfit` 是扣佣金/FBA 后的估算毛利率，不是采购毛利。
+- `demand` 返回约 50 行需求词；`demand-keywords` 是完整关键词列表，按页读。
+- 读取：报告页 Vue 状态/表格用 `read-table.js`，图表/分布用 `observe`/VOM；站点与页面不一致时不要读。
+
+### 类目节点
+
+- 字段：`id`、`label`、`nodeLabelPathLocale`、`products`、`children`、`isLeaf`。
+- 未展开节点的 `children` 只计算已加载子节点，可能是 0；展开后再读真实数量。
+- 叶子节点返回空列表并给出 note；没有独立的 `/v3/category-nodes` 页面。
+
 ## 8. 排序、分页、每页条数
 
 - 默认排序：`total_sales` 降序（URL `order={"field":"total_sales","desc":true}`）。
@@ -79,6 +98,8 @@
 - 实测总数 **1,611**，第 1 页读取 **60** 行，`pageSize=60`、`currentPage=1`。
 - 分页用 `read-table.js` 的 `total/pageSize/currentPage`；翻页后重新读表。
 - 结果表是「表头表 + 表体表」分开渲染；`bsk extract table` 需要分别取，表体列名是生成的 `c1..cN`，所以优先 `read-table.js`。
+- 市场报告：月份用报告页下拉；`sampleCount`/`newReleaseNum`/`topN` 在路由里，报告页没有控件；`demand` 约 50 行，`demand-keywords` 在报告页内分页。
+- 类目树：没有分页；展开节点再读子节点；`/v3/category-nodes` 会回到本页，不要找独立类目页。
 
 ## 9. 导出
 
@@ -97,6 +118,10 @@
 - 筛选条件不保证全部写入 URL；复制 URL 不一定能完整复现筛选。报告必须写页面回显的条件。
 - 结果区是表头表/表体表分离；`bsk extract table` 的默认 target 可能先命中表头表（0 行）。
 - 页面有「旧版入口」「自定义品类」「我的模式」等入口，本版不展开。
+- **市场报告是 drill-down**，不是独立菜单；URL 带 `marketId`/`nodeIdPath`。页面站点与请求站点不一致时不要读，避免把别的站点数据当成本站点。
+- 市场报告的 `total` 是样本数，不是类目全量；全量商品数看 `totalProducts`。`avgProfit` 是扣佣金/FBA 后估算毛利率，不是采购毛利。
+- `demand` 只有约 50 行；完整需求词用 `demand-keywords`，不要拿 50 行当全量。
+- 类目树未展开节点的 `children` 可能是 0；叶子节点空列表。`/v3/category-nodes` 会重定向到本页，不存在独立类目页。
 
 ## 11. 验证清单
 
@@ -115,7 +140,9 @@
 2. **找低竞争市场**：在市场竞争指标里设「平均卖家数 ≤ N」「商品集中度 ≤ X%」→ 开始筛选 → 对照月总销量/月均销售额挑候选。
 3. **看新品机会**：市场波动指标里设「新品数量占比 ≥ X%」→ 开始筛选 → 结合新品平均价格/评分数判断入场难度。
 4. **看长期趋势**：切换「近24个月动态趋势」→ 选月份 → 重新筛选；趋势数据不要和单月静态数据混在一张表里比较。
-5. **继续下钻**：用结果行的「细分市场」/「市场分析」入口进入该市场的商品明细或分析页（本版未展开该入口的完整流程）。
+5. **看单个市场报告**：从结果行的细分市场/市场分析入口进入 drill-down → 读 summary/sales/集中度/价格/需求等报告块；注意 `total` 是样本数。
+6. **查类目节点**：打开「选择类目」→ 展开节点 → 读 `id`/`label`/路径/`products`；节点路径可直接给选市场/选产品/ABA 当参数。
+7. **继续下钻**：用结果行的「细分市场」/「市场分析」入口进入该市场的商品明细或分析页。
 
 ## 13. 验证记录
 

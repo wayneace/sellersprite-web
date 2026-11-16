@@ -1,6 +1,6 @@
 ---
 name: sellersprite-web
-version: 1.2.0
+version: 1.3.0
 description: Operate SellerSprite (卖家精灵) in the user's logged-in browser with bsk. Use for 竞品分析 / 选产品 / 选市场 / ABA数据选品 / 产品库 / 关键词选品 / 关键词挖掘 / 关键词反查 / 流量词对比 / 拓展流量词 / 关键词转化率 / 关键词词库 / 实时查竞价 / 查流量来源 / 广告洞察 / 关联流量 / 出单词反查 / AI评论分析 / 销量预测 / 利润计算器 / 批量下载图片 / AI解读（竞品运营拆解、市场洞察、AI-找竞品、Listing诊断、AI-拓产品、关键词需求洞察） on Amazon US (fully verified) or CA (product-research verified; other pages control-check only) when the SellerSprite MCP/API is unavailable, rate-limited, or the user wants zero-API-key access through their own browser.
 ---
 
@@ -48,7 +48,7 @@ bsk observe --session <SID> --max-tokens 4000
    - exit 1 → 按输出提示用户更新（`bsk update` 或重新安装/更新 browser-skill）；
    - exit 2 → 未检测到 browser-skill：提示用户确认安装；若当前会话已有 browser-skill 可继续，但记录「bsk skill 版本未校验」；
    - exit 0 → 通过；若输出 browser extension 警告，提示用户在 Chrome 里更新 BrowserSkill 扩展（`bsk read` 可能暂不可用，改用 `bsk extract` / `bsk evaluate`）。
-2. 读 `<skill-dir>/VERSION` 得到本地 sellersprite-web skill 版本（本版 `1.2.0`）。
+2. 读 `<skill-dir>/VERSION` 得到本地 sellersprite-web skill 版本（本版 `1.3.0`）。
 3. 查远端最新版本（公开仓库；失败就跳过，不阻塞任务）：
    `curl -fsSL https://raw.githubusercontent.com/wayneace/sellersprite-web/main/skill/sellersprite-web/VERSION`
 4. 远端版本高于本地 → 提示用户更新 skill（在 Cherry Studio 里用 GitHub 链接重新安装：`https://github.com/wayneace/sellersprite-web/blob/main/skill/sellersprite-web/SKILL.md`），**不要自行覆盖安装目录**；用户确认后再更新。
@@ -72,12 +72,12 @@ bsk observe --session <SID> --max-tokens 4000
 
 | 页面 | URL | 文档 | 读取方式 |
 |---|---|---|---|
-| 竞品分析 | `/v3/competitor-lookup` | [references/pages/competitor-lookup.md](references/pages/competitor-lookup.md) | `read-table.js`（extract 读不出行） |
+| 竞品分析 | `/v3/competitor-lookup` | [references/pages/competitor-lookup.md](references/pages/competitor-lookup.md) | `read-table.js`（extract 读不出行）；销量/Keepa 抽屉用 `observe` |
 | 选产品 | `/v3/product-research` | [references/pages/product-research.md](references/pages/product-research.md) | `read-table.js`（extract 读不出行） |
-| 选市场 | `/v3/market-research` | [references/pages/market-research.md](references/pages/market-research.md) | `read-table.js`（表头/表体分离） |
-| 关键词选品 | `/v2/keyword-research` | [references/pages/keyword-research.md](references/pages/keyword-research.md) | `bsk extract table`（legacy 表格） |
-| ABA数据选品 | `/v3/aba-research` | [references/pages/aba-research.md](references/pages/aba-research.md) | `read-table.js` |
-| 产品库 | `/v3/product-store` | [references/pages/product-store.md](references/pages/product-store.md) | `read-table.js`（只读） |
+| 选市场 | `/v3/market-research` | [references/pages/market-research.md](references/pages/market-research.md) | `read-table.js`（表头/表体分离）；市场报告/类目树用 `observe` |
+| 关键词选品 | `/v2/keyword-research` | [references/pages/keyword-research.md](references/pages/keyword-research.md) | `bsk extract table`（legacy 表格）；历史趋势弹窗用 `observe` |
+| ABA数据选品 | `/v3/aba-research` | [references/pages/aba-research.md](references/pages/aba-research.md) | `read-table.js`；趋势抽屉用 `observe` |
+| 产品库 | `/v3/product-store` | [references/pages/product-store.md](references/pages/product-store.md) | `read-table.js`（只读）；库内表同 `read-table.js` |
 | 关键词挖掘 | `/v3/keyword-miner` | [references/pages/keyword-miner.md](references/pages/keyword-miner.md) | `read-table.js` |
 | 关键词反查 | `/v3/keyword-reverse` | [references/pages/keyword-reverse.md](references/pages/keyword-reverse.md) | `read-table.js` |
 | 流量词对比 | `/v3/keyword-comparison` | [references/pages/keyword-comparison.md](references/pages/keyword-comparison.md) | `read-table.js` |
