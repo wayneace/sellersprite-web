@@ -8,7 +8,7 @@
 
 ## 覆盖范围
 
-按卖家精灵真实页面覆盖 27 个功能：
+按卖家精灵真实页面覆盖 27 个站内功能：
 
 | 菜单 | 页面 |
 |---|---|
@@ -40,7 +40,17 @@
 | AI-拓产品 | `/v3/ai-history/ep` |
 | 关键词需求洞察 | `/v3/ai-history/krt` |
 
-站点覆盖 US（USD，页面显示 `$`）和 CA（CAD，页面显示 `C$`）；US 做完整验证；CA 仅选产品完成数据验证，其余页面只确认站点控件，CA 数据未验证。
+另含 2 个 Amazon 页内扩展面板和 Amazon StyleSnap 搜图，不计入上面的 27 页：
+
+| 功能 | 入口 | 说明 |
+|---|---|---|
+| 关键词收录 | Amazon 页内扩展面板 | 自然位 + 广告位；不消耗 AI 次数 |
+| 筛查相关性 | Amazon 页内扩展面板 | 高/中/低/不相关分级；不消耗 AI 次数 |
+| 搜图 | `https://www.amazon.com/stylesnap?q=local` | UI 返回相似商品卡片；相似度 `matchScore` 用 CLI |
+
+细节见 `skill/sellersprite-web/references/extension-panels.md`。
+
+站点覆盖 US（USD，页面显示 `$`）和 CA（CAD，页面显示 `C$`）；US 做完整验证；CA 仅选产品完成数据验证，其余页面只确认站点控件，CA 数据未验证。扩展面板和 StyleSnap 只在 US `amazon.com` 验证，CA 未验证。
 
 ## 安装到 Cherry Studio
 
@@ -74,13 +84,15 @@ agent 先读 `skill/sellersprite-web/SKILL.md`，按任务打开对应页面文�
 2. `bsk sync --json` / `bsk observe --session <SID>` 看页面现场；
 3. 用最新 `@eN` 操作一个控件（click/fill/select 不需要逐次带 `--session/--context`）；
 4. 再做一次 `bsk sync` / `bsk observe` 确认页面变化；
-5. 用 `bsk read` 读简单字段，`bsk extract table|list` 读表格/列表，必要时用 `<skill-dir>/scripts/read-table.js` 或 `read-page-state.js` 兜底；
+5. 用 `bsk read` 读简单字段，`bsk extract table|list` 读表格/列表，必要时用 `<skill-dir>/scripts/read-table.js` 或 `read-page-state.js` 兜底；扩展面板的关键词收录用 `el-table__header/body`，筛查相关性用 `vxe-table--header/body`，StyleSnap 用 `article.cellContainer`；
 6. 核对 URL、站点、数据月份、筛选条件、总数、读取行数；
 7. `bsk close` 收尾。
 
 点击没有反应时先观察，不要在没有任何新信息的情况下重复同一动作。
 
 AI 页面会消耗次数：生成前确认页面按钮标注的次数，每页本次只生成 1 份，失败/超时不重试；本版不下载、不删除 AI 报告。创建关键词词库属于写操作，必须先得到用户明确同意。AI 通用规则见 `skill/sellersprite-web/references/ai-reports.md`。
+
+扩展面板（关键词收录、筛查相关性）不消耗卖家精灵 AI 次数；StyleSnap 也不消耗 AI 次数。扩展面板需要扩展本身已登录，未登录用 `bsk request-help` 请用户完成，不代登录。
 
 ## 只读片段
 
@@ -91,6 +103,10 @@ AI 页面会消耗次数：生成前确认页面按钮标注的次数，每页�
 
 数据来自卖家精灵网页接口及其估算模型，不是 Amazon 官方口径。使用前请自行确认符合卖家精灵
 的服务条款和会员协议。报告数据时必须带 URL、站点、数据月份、查询条件、总数和读取行数。
+
+StyleSnap 的 UI 结果卡片不显示相似度；需要 `matchScore` 时用同作者的
+`sellersprite-web-cli`（`ssw product image-search`）。`matchScore` 是 Amazon 内部视觉相似度
+（约 0–1），不是百分比，不能跨查询比较；`category` 是检测区域标签，不是商品类目。
 
 网页版查询没有额度限制；仍不要重复跑同一查询，批量数据优先用页面导出。
 

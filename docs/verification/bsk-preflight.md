@@ -88,3 +88,13 @@ exit=0
 - **KRT**：实际前置是关键词词库（不是 ASIN/关键词）；空词库 `下一步` 不可用，少于 50 个关键词提示打标效果有限；报告有效期 30 天（其他 AI 页多为 10 天）；按钮未标消耗，按额度变化推算约 10 次。
 - **`bsk read` 限制**：读整页/大表格会报 `DOM read byte limit exceeded`；优先用 `--ref`/具体 selector，表格用 `bsk extract` 或 VOM。
 - **隐私**：以上验证未记录账号名、余额、词库名、session id、report id 或绝对用户路径。
+
+## 2026-11-16 扩展面板与 StyleSnap 复核（bsk 0.5.0 / 扩展 0.5.0）
+
+- bsk CLI 0.5.0、browser-skill 0.5.0、扩展 0.5.0 / protocol 1.9 未变；`check-bsk.sh` exit 0。
+- **扩展面板**：Amazon 页注入 `#main-sellersprite-extension`，面板 `#ext-main-box`；未登录时显示 `.ext-sign-in-card-box`，必须 `bsk request-help` 请用户完成。面板标签是 `li.nav-item-ext a.nav-web`。
+- **关键词收录**：当前结果表是 `table.el-table__header` + `table.el-table__body`，不是旧 CLI 文档的 `vxe-table`；`当前页码`/`绝对位置` 各两行（绿色广告位、灰色自然位），没有单独广告类型列。`指定页码` 暴露为 `前1页`–`前20页`，默认前20页；`查询变体` checkbox 默认关闭。
+- **筛查相关性**：结果表是 `table.vxe-table--header` + `table.vxe-table--body`；默认阈值 5/20/60；「示例数据」填入 48 ASIN × 20 关键词；结果渐进渲染并按相关性重排，等 `共筛查 N 个关键词` 且行稳定后再读。
+- **StyleSnap**：`https://www.amazon.com/stylesnap?q=local`，`Upload a Photo` / `#file`（`accept="image/avif,image/*"`）；上传后同页出现 28 个 `article.cellContainer`，无分页/加载更多；UI 不显示 `matchScore`，相似度用 CLI `ssw product image-search`。
+- **`bsk upload` 限制**：对 StyleSnap `#file` 报 CDP `-32000 Not allowed`，`input`/`drop` 都失败；`#file` 可见且未禁用，`files.length` 为 0。处理顺序：CLI `--image`/`--image-url` → `bsk request-help` 让用户手动选公开图 → 不在页面里注入 `fetch`/`XMLHttpRequest`。
+- **账号隐私**：扩展面板出现账号/额度文案时只作为页面状态判断，不记录账号名、余额、session id 或报告 id。

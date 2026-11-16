@@ -1,12 +1,12 @@
 ---
 name: sellersprite-web
-version: 1.3.0
-description: Operate SellerSprite (卖家精灵) in the user's logged-in browser with bsk. Use for 竞品分析 / 选产品 / 选市场 / ABA数据选品 / 产品库 / 关键词选品 / 关键词挖掘 / 关键词反查 / 流量词对比 / 拓展流量词 / 关键词转化率 / 关键词词库 / 实时查竞价 / 查流量来源 / 广告洞察 / 关联流量 / 出单词反查 / AI评论分析 / 销量预测 / 利润计算器 / 批量下载图片 / AI解读（竞品运营拆解、市场洞察、AI-找竞品、Listing诊断、AI-拓产品、关键词需求洞察） on Amazon US (fully verified) or CA (product-research verified; other pages control-check only) when the SellerSprite MCP/API is unavailable, rate-limited, or the user wants zero-API-key access through their own browser.
+version: 1.4.0
+description: Operate SellerSprite (卖家精灵) in the user's logged-in browser with bsk. Use for 竞品分析 / 选产品 / 选市场 / ABA数据选品 / 产品库 / 关键词选品 / 关键词挖掘 / 关键词反查 / 流量词对比 / 拓展流量词 / 关键词转化率 / 关键词词库 / 实时查竞价 / 查流量来源 / 广告洞察 / 关联流量 / 出单词反查 / AI评论分析 / 销量预测 / 利润计算器 / 批量下载图片 / AI解读（竞品运营拆解、市场洞察、AI-找竞品、Listing诊断、AI-拓产品、关键词需求洞察）, plus the Amazon in-page extension panels 关键词收录 / 筛查相关性 and Amazon StyleSnap 搜图, on Amazon US (fully verified) or CA (product-research verified; other pages control-check only) when the SellerSprite MCP/API is unavailable, rate-limited, or the user wants zero-API-key access through their own browser.
 ---
 
 # 卖家精灵网页操作手册
 
-用 `bsk` 驱动用户**已登录**的浏览器，在卖家精灵网页上观察、查询、读取数据，并把出处一起报告。本 skill 不提供任何 CLI 或 API 封装：操作由 agent 完成，`scripts/` 只有读取当前页面状态的只读片段。
+用 `bsk` 驱动用户**已登录**的浏览器，在卖家精灵网页上观察、查询、读取数据，并把出处一起报告。本 skill 不提供任何 CLI 或 API 封装：操作由 agent 完成，`scripts/` 只有读取当前页面状态的只读片段。搜图的相似度分数可选同作者的 `sellersprite-web-cli`，本 skill 只记录它的用法，不封装、不依赖它。
 
 ## 红线
 
@@ -16,7 +16,7 @@ description: Operate SellerSprite (卖家精灵) in the user's logged-in browser
 - **查询次数**：网页版没有查询额度限制，但不要重复跑同一查询；批量/重复查询先确认，能用页面导出就用导出。
 - **有副作用的按钮**：导出必须单独确认且只提交一次；删除、保存、提交类按钮必须先得到用户明确同意。
 - **AI 报告**：生成前确认按钮消耗次数；每个页面本次只生成 1 份，失败不重试；本版不下载/删除报告。创建关键词词库属于写操作，必须先得到用户明确同意。
-- **范围**：本版覆盖下面 27 个页面；US 全部完整验证，CA 仅选产品完成数据验证，其余 CA 页面只确认站点控件、按未验证对待。插件面板、监控、外观专利、全球商标库、关键词收录等不在本版。
+- **范围**：本版覆盖下面 27 个页面，另含 2 个 Amazon 页内扩展面板（关键词收录、筛查相关性）和 Amazon StyleSnap 搜图；扩展面板与搜图不计入 27 页。US 全部完整验证；CA 仅选产品完成数据验证，其余 CA 页面只确认站点控件、按未验证对待。监控、外观专利、全球商标库等不在本版。
 - **数据口径**：数据来自卖家精灵网页与估算模型，不是 Amazon 官方数据。报告必须带 URL、站点、数据月份、查询条件、总数、实际读取行数、页码，缺一项就不算完成。
 - **页面改版**：发现标题、菜单、控件或表头与页面文档不符，先按 `troubleshooting.md` 复核；确认改版后停止旧步骤，记录 URL、截图与差异，提示用户向作者提反馈（`https://github.com/wayneace/sellersprite-web/issues`）。不要猜新流程后继续报数。
 
@@ -48,7 +48,7 @@ bsk observe --session <SID> --max-tokens 4000
    - exit 1 → 按输出提示用户更新（`bsk update` 或重新安装/更新 browser-skill）；
    - exit 2 → 未检测到 browser-skill：提示用户确认安装；若当前会话已有 browser-skill 可继续，但记录「bsk skill 版本未校验」；
    - exit 0 → 通过；若输出 browser extension 警告，提示用户在 Chrome 里更新 BrowserSkill 扩展（`bsk read` 可能暂不可用，改用 `bsk extract` / `bsk evaluate`）。
-2. 读 `<skill-dir>/VERSION` 得到本地 sellersprite-web skill 版本（本版 `1.3.0`）。
+2. 读 `<skill-dir>/VERSION` 得到本地 sellersprite-web skill 版本（本版 `1.4.0`）。
 3. 查远端最新版本（公开仓库；失败就跳过，不阻塞任务）：
    `curl -fsSL https://raw.githubusercontent.com/wayneace/sellersprite-web/main/skill/sellersprite-web/VERSION`
 4. 远端版本高于本地 → 提示用户更新 skill（在 Cherry Studio 里用 GitHub 链接重新安装：`https://github.com/wayneace/sellersprite-web/blob/main/skill/sellersprite-web/SKILL.md`），**不要自行覆盖安装目录**；用户确认后再更新。
@@ -100,7 +100,15 @@ bsk observe --session <SID> --max-tokens 4000
 | AI-拓产品 | `/v3/ai-history/ep` | [references/pages/ai-product-expansion.md](references/pages/ai-product-expansion.md) | `bsk read`（AI 报告） |
 | 关键词需求洞察 | `/v3/ai-history/krt` | [references/pages/ai-keyword-demand.md](references/pages/ai-keyword-demand.md) | `bsk read`（AI 报告，前置词库） |
 
-先读对应页面文档再操作；找不到页面时看 [references/site-map.md](references/site-map.md)。
+### 扩展面板与 Amazon 搜图（不计入 27 页）
+
+| 功能 | 入口 | 文档 | 读取方式 |
+|---|---|---|---|
+| 关键词收录 | Amazon 页内扩展面板 | [references/extension-panels.md](references/extension-panels.md#关键词收录) | `bsk evaluate` 读 `el-table__header` + `el-table__body` |
+| 筛查相关性 | Amazon 页内扩展面板 | [references/extension-panels.md](references/extension-panels.md#筛查相关性) | `bsk evaluate` 读 `vxe-table--header` + `vxe-table--body` |
+| 搜图 | `https://www.amazon.com/stylesnap?q=local` | [references/extension-panels.md](references/extension-panels.md#搜图amazon-shop-the-look--stylesnap) | UI 读 `article.cellContainer`；相似度用 CLI `matchScore` |
+
+先读对应页面文档再操作；找不到页面时看 [references/site-map.md](references/site-map.md)。扩展面板未登录时用 `bsk request-help`，不要代登录；两个面板的表格结构不同，不要互换选择器。
 
 ## 路由
 
@@ -112,6 +120,7 @@ bsk observe --session <SID> --max-tokens 4000
 6. **市场/竞品筛选**：`competitor-lookup`（从 ASIN/关键词/品牌/卖家/类目出发）→ `product-research` 深筛。
 7. **广告与关联流量**：`ads-insights`（看广告/流量结构）→ `relation-keyword`（看关联流量）→ `aba-reverse-search`（找出单词）。
 8. **工具与 AI 解读**：`sales-estimator` / `profit-calculator`（验证销量与利润）→ `batch-download-pictures`（取素材）→ AI 解读六页（竞品运营拆解/市场洞察/AI-找竞品/Listing诊断/AI-拓产品/关键词需求）；AI 生成前先看 `references/ai-reports.md`。
+9. **扩展面板与搜图**：`关键词收录`（查自然位/广告位）→ `筛查相关性`（筛词库/竞品词）；需要相似款时用 Amazon StyleSnap 搜图，相似度分数用 CLI 的 `matchScore`，UI 不显示分数。详见 `references/extension-panels.md`。
 
 ## 报告格式
 
@@ -130,6 +139,7 @@ URL:
 - 行数写实际读到的行数；两者不一致说明截断或翻页，必须写清楚。
 - 数据月份取页面月份选择器的值，不按系统日期猜。
 - 估算数据加一句免责声明：来自卖家精灵网页/估算模型，非 Amazon 官方口径。
+- 扩展面板和 StyleSnap 用 `references/extension-panels.md` 的报告格式；UI 没有相似度分数，不要补造，CLI 才有 `matchScore`。
 
 ## 参考
 
@@ -139,4 +149,5 @@ URL:
 - [references/troubleshooting.md](references/troubleshooting.md) —— 症状、先观察什么、禁止动作。
 - [references/site-map.md](references/site-map.md) —— 全站菜单导航与覆盖状态。
 - [references/ai-reports.md](references/ai-reports.md) —— AI 报告的生成、等待、消耗、有效期与隐私规则。
+- [references/extension-panels.md](references/extension-panels.md) —— 关键词收录、筛查相关性、Amazon StyleSnap 搜图与 CLI 相似度。
 - [scripts/README.md](scripts/README.md) —— 只读片段的运行方式。

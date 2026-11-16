@@ -24,6 +24,14 @@ bsk observe --session <SID> --max-tokens 4000
 - 确认已登录（右上角头像）和目标站点（查询栏最左侧「美国站」/「加拿大站」）。未登录用 `bsk request-help --session <SID> --prompt "请登录卖家精灵"`。
 - 收尾 `bsk close --json`，即使中途出错也要 close。
 
+## 扩展面板与 Amazon 搜图
+
+- 关键词收录、筛查相关性不在卖家精灵工作台，入口是 Amazon 页内扩展面板；StyleSnap 是 Amazon 的 `/stylesnap?q=local`。细节见 `extension-panels.md`。
+- 扩展未登录时先 `bsk request-help` 请用户完成；不要代点「同步网页端账号」，不要输入/读取密码、cookie、token。
+- 关键词收录表用 `el-table__header` + `el-table__body`；筛查相关性表用 `vxe-table--header` + `vxe-table--body`。两页选择器不同，不要套用 `read-table.js` 的默认假设。
+- 两个面板都是渐进渲染：等「检索已完成」且行稳定后再读；刷新会中断任务，不要刷新页面。
+- StyleSnap UI 只返回相似商品卡片，不返回相似度；需要 `matchScore` 用 CLI `ssw product image-search`。`bsk upload` 在该页可能报 `Not allowed`，按 `troubleshooting.md` 处理。
+
 ## 观察
 
 - 看标题、子导航、查询栏、筛选面板、结果区、分页区六个位置。

@@ -50,5 +50,9 @@ else
     grep -q "$url" "$ROOT/skill/sellersprite-web/references/site-map.md" || { echo "SITE-MAP MISSING $url"; status=1; }
     grep -q "$url" "$ROOT/README.md" || { echo "README MISSING $url"; status=1; }
   done
+  ref="$ROOT/skill/sellersprite-web/references/extension-panels.md"
+  [ -f "$ref" ] || { echo "MISSING $ref"; status=1; }
+  grep -q "extension-panels.md" "$ROOT/skill/sellersprite-web/SKILL.md" \
+    || { echo "SKILL MISSING extension-panels.md"; status=1; }
 fi
 exit "$status"

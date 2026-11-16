@@ -1,6 +1,8 @@
 # 站点地图（site-map）
 
-工作台顶部「产品」菜单的完整结构（2026-11-12 live 读取）。本版覆盖 27 个页面，其余标「未覆盖」——不要凭菜单名猜测页面能力。
+工作台顶部「产品」菜单的完整结构（2026-11-12 live 读取）。本版覆盖 27 个页面，其余站内菜单标「未覆盖」——不要凭菜单名猜测页面能力。
+
+> 扩展面板（关键词收录、筛查相关性）和 Amazon StyleSnap 搜图不在本站菜单，见 [extension-panels.md](extension-panels.md)。
 
 ## 大数据选品
 
@@ -24,7 +26,7 @@
 | 流量词对比 | [已覆盖](pages/keyword-comparison.md) · `/v3/keyword-comparison` |
 | 拓展流量词 | [已覆盖](pages/traffic-extend.md) · `/v3/traffic/extend` |
 | 关键词转化率 | [已覆盖](pages/keyword-conversion-rate.md) · `/v3/keyword-conversion-rate` |
-| 关键词收录 | 未覆盖 |
+| 关键词收录 | 扩展面板（Amazon 页内）→ [extension-panels.md](extension-panels.md#关键词收录) |
 | 关键词词库 | [已覆盖](pages/keyword-store.md) · `/v3/keyword-store` |
 | 实时查竞价 | [已覆盖](pages/real-time-bidding.md) · `/v3/real-time-bidding` |
 
@@ -70,3 +72,10 @@
 - 已登录工作台后，点顶部「产品」打开本菜单；也可以直接 `bsk open "<URL>" --json` 打开上表 URL。
 - 菜单里部分页面带 TikTok / NEW / 免费标签，标签不改变页面 URL。
 - 直接输入 URL 时注意 `/v2/keyword-research` 可能跳转到 `/v3/keyword-miner`，以页面文档的实测为准。
+
+## 不在本站菜单
+
+| 功能 | 入口 | 文档 |
+|---|---|---|
+| 筛查相关性 | Amazon 页内扩展面板 | [extension-panels.md](extension-panels.md#筛查相关性) |
+| 搜图 / StyleSnap | `https://www.amazon.com/stylesnap?q=local` | [extension-panels.md](extension-panels.md#搜图amazon-shop-the-look--stylesnap) |

@@ -6,6 +6,11 @@
 |---|---|---|---|
 | 页面显示登录或「登录已过期」 | 右上角头像、URL 是否被重定向到登录页 | `bsk request-help --session <SID> --prompt "请登录卖家精灵"`，等用户完成后重新 `observe` | 代输账号密码、读 cookie/token、绕过登录 |
 | 点击后页面无变化 | 按钮是否禁用/置灰、是否有加载遮罩、是否有校验提示或弹窗、是否被登录弹窗挡住 | 换最新 ref 重看状态；先处理遮罩/提示/登录，再决定是否再点一次 | 无新观察连点；连续刷新；换多个选择器乱点 |
+| 扩展面板不出现或显示「卖家精灵用户登录」浮层 | `#main-sellersprite-extension` 是否注入、`.ext-sign-in-card-box` 是否可见、Amazon 域名是否目标站点 | `bsk request-help` 请用户完成扩展登录；登录后重新 `observe`，再点 `关键词收录` / `筛查相关性` | 代点「同步网页端账号」「我要手动登录」；读扩展存储/cookie；在没有扩展的浏览器里重试 |
+| 扩展面板结果表读不出 | 关键词收录是不是 `table.el-table__header` + `table.el-table__body`；筛查相关性是不是 `table.vxe-table--header` + `table.vxe-table--body` | 用对应选择器 `bsk evaluate` 读表头/表体；先确认完成文案和行数 | 把关键词收录当 `vxe-table`、把筛查相关性当 `el-table`；对同一片段反复重试 |
+| 扩展面板结果一直变或行重排 | 是否还在「正在检索中... 已完成 X / Y」；完成文案是否出现；行顺序是否稳定 | 等「检索已完成」和 `共筛查 N 个关键词` 出现，连续两次读到的行顺序一致再报数 | 刷新页面；读第一屏当最终结果；重复点开始检索 |
+| StyleSnap 上传报 `Not allowed` | `#file` 是否可见/禁用；`bsk upload` 是 input 还是 drop 模式；是否用了本地文件 | 优先改用 CLI `--image` / `--image-url`；否则 `bsk request-help` 请用户手动选公开图片 | 在页面里注入 `fetch`/`XMLHttpRequest` 复刻上传；反复重放同一个 upload |
+| StyleSnap UI 没有相似度分数 | 卡片是否有 `matchScore` 字段；是否只看了 UI 卡片 | 需要分数时用 CLI `ssw product image-search` 的 `matchScore`；UI 报告写「未显示」 | 把 Amazon 排名/评分当相似度；补造 `matchScore` |
 | 下拉/排序点不开或选项没出现 | 下拉是否真的展开、是否被 bsk 控制浮层或 tooltip 遮挡、是否点到了另一个 `.el-select` | 重新 `observe`；`scroll-to` 目标；必要时 `focus` 后按 `Enter` 选择；核对页面回显 | 对着同一坐标连点；盲试所有下拉；把没展开当成没有选项 |
 | 查询后总数没变 | 先用「查询前签名」对比：`{total, 首行 ASIN/关键词}` 是否变化；再看筛选面板是否提交、输入是否回显、是否还在旧请求 | 签名 300–500ms 复查最多 3 次；仍没变就点「开始筛选」/「立即查询」并观察遮罩/提示 | 把「没变」当成页面坏了；把旧结果当新查询报数；反复提交同一查询 |
 | `observe` 输出被截断或找不到控件 | 末尾是否有 `@more`/`--cursor`；是否只是 `--max-tokens` 太小 | 用 `--cursor` 继续或把 `--max-tokens` 提到 8000，再找可见标签 | 因为没看到就断言控件不存在；盲点坐标 |
